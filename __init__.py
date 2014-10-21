@@ -1,3 +1,4 @@
+import os
 import gzip
 import cPickle
 import numpy as np
@@ -35,7 +36,7 @@ def load_data(digits, shuffle=True):
     for d in digits:
         assert d in range(10)
 
-    path_to_d3set = './d3set.pkl.gz'
+    path_to_d3set = os.path.join(os.path.dirname(__file__), 'd3set.pkl.gz')
     seed = 1234
     dim = 28
     n_class = 10
@@ -120,7 +121,7 @@ def load_img(digits, shuffle=True):
     for d in digits:
         assert d in range(10)
 
-    path_to_d3set = './d3set.pkl.gz'
+    path_to_d3set = os.path.join(os.path.dirname(__file__), 'd3set.pkl.gz')
     seed = 1234
     dim = 28
     n_class = 10
