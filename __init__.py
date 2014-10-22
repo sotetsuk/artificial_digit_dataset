@@ -4,7 +4,7 @@ import cPickle
 import numpy as np
 
 
-def load_data(digits, shuffle=True):
+def load_data(digits=[0,1,2,3,4,5,6,7,8,9], shuffle=True):
     """
     load Digital DIgits Data set (d3set)
 
@@ -89,7 +89,7 @@ def load_data(digits, shuffle=True):
             (test_set_x_ret, test_set_y_ret))
 
 
-def load_img(digits, shuffle=True):
+def load_img(digits=[0,1,2,3,4,5,6,7,8,9], shuffle=True):
     """
     load Digital DIgits Data set (d3set)
 
