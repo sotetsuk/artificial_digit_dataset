@@ -2,6 +2,7 @@ import os
 import gzip
 import cPickle
 import numpy as np
+import scipy.stats as ss
 
 
 def load_data(digits=[0,1,2,3,4,5,6,7,8,9], shuffle=True):
@@ -172,3 +173,108 @@ def load_img(digits=[0,1,2,3,4,5,6,7,8,9], shuffle=True):
     return ((train_set_x_ret.reshape((len(digits)*n_train/n_class, dim, dim)), train_set_y_ret),
             (valid_set_x_ret.reshape((len(digits)*n_valid/n_class, dim, dim)), valid_set_y_ret),
             (test_set_x_ret.reshape((len(digits)*n_test/n_class, dim, dim)), test_set_y_ret))
+
+
+def make_data(digits=[0,1,2,3,4,5,6,7,8,9], p=0.25, std=0.1, shuffle=True):
+    """
+    make data set
+    """
+
+    # make parts
+    dim = 28
+
+    a = np.zeros((dim, dim))
+    b = np.zeros((dim, dim))
+    b[3:5, 8:20] = 1.
+    c = np.zeros((dim, dim))
+    c[5:13, 6:8] = 1.
+    d = np.zeros((dim, dim))
+    d[13:15, 8:20] = 1.
+    e = np.zeros((dim, dim))
+    e[5:13, 20:22] = 1.
+    f = np.zeros((dim, dim))
+    f[15:23, 6:8] = 1.
+    g = np.zeros((dim, dim))
+    g[23:25, 8:20] = 1.
+    h = np.zeros((dim, dim))
+    h[15:23, 20:22]  = 1.
+
+    # make digits
+    digits = [np.zeros((dim, dim)) for i in range(10)]
+    digits[0] = a + b + c + e + f + g + h
+    digits[1] = a + e + h
+    digits[2] = a + b + e + d + f + g
+    digits[3] = a + b + e + d + h + g
+    digits[4] = a + c + d + e + h
+    digits[5] = a + b + c + d + g + h
+    digits[6] = a + b + c + f + d + h + g
+    digits[7] = a + b + e + h
+    digits[8] = a + b + c + d + e +f + g + h
+    digits[9] = a + b + c + d + e + h
+
+    # make dataset
+    train_n = 50000
+    valid_n = 10000
+    test_n = 10000 
+
+    train_set_x = []
+    train_set_y = []
+
+    for i in range(10):
+        for j in range(train_n/10):
+            m = np.array(ss.bernoulli(p).rvs((28, 28)), np.bool)
+            t = np.copy(digits[i])
+            t[m] -= 1.
+            t[t == -1.] = 1.
+            t *= 0.5
+            t = t + ss.norm(0., std).rvs((dim, dim))
+            t[t < 0.] = 0.
+        
+            train_set_x.append(t)
+            train_set_y.append(i)
+        
+    train_set_x = np.array(train_set_x, np.float32).reshape(train_n, dim*dim)
+    train_set_y = np.array(train_set_y, np.int32)
+
+
+    valid_set_x = []
+    valid_set_y = []
+
+    for i in range(10):
+        for j in range(valid_n/10):
+            m = np.array(ss.bernoulli(p).rvs((28, 28)), np.bool)
+            t = np.copy(digits[i])
+            t[m] -= 1.
+            t[t == -1.] = 1.
+            t *= 0.5
+            t = t + ss.norm(0., std).rvs((dim, dim))
+            t[t < 0.] = 0.
+        
+            valid_set_x.append(t)
+            valid_set_y.append(i)
+        
+    valid_set_x = np.array(valid_set_x, np.float32).reshape(valid_n, dim*dim)
+    valid_set_y = np.array(valid_set_y, np.int32)
+
+
+    test_set_x = []
+    test_set_y = []
+
+    for i in range(10):
+        for j in range(test_n/10):
+            m = np.array(ss.bernoulli(p).rvs((28, 28)), np.bool)
+            t = np.copy(digits[i])
+            t[m] -= 1.
+            t[t == -1.] = 1.
+            t *= 0.5
+            t = t + ss.norm(0., std).rvs((dim, dim))
+            t[t < 0.] = 0.
+        
+            test_set_x.append(t)
+            test_set_y.append(i)
+        
+    test_set_x = np.array(test_set_x, np.float32).reshape(test_n, dim*dim)
+    test_set_y = np.array(test_set_y, np.int32)
+
+    datasets = ((train_set_x, train_set_y), (valid_set_x, valid_set_y), (test_set_x, test_set_y))
+    return datasets
