@@ -175,10 +175,13 @@ def load_img(digits=[0,1,2,3,4,5,6,7,8,9], shuffle=True):
             (test_set_x_ret.reshape((len(digits)*n_test/n_class, dim, dim)), test_set_y_ret))
 
 
-def make_data(digits=[0,1,2,3,4,5,6,7,8,9], p=0.25, std=0.1, shuffle=True):
+def make_data(digits=[0,1,2,3,4,5,6,7,8,9], sizes=[50000,10000,10000], 
+              p=0.25, std=0.1, shuffle=True):
     """
     make data set
     """
+
+    seed = 1233
 
     # make parts
     dim = 28
@@ -213,9 +216,7 @@ def make_data(digits=[0,1,2,3,4,5,6,7,8,9], p=0.25, std=0.1, shuffle=True):
     digits[9] = a + b + c + d + e + h
 
     # make dataset
-    train_n = 50000
-    valid_n = 10000
-    test_n = 10000 
+    train_n, valid_n, test_n = sizes 
 
     train_set_x = []
     train_set_y = []
@@ -275,6 +276,21 @@ def make_data(digits=[0,1,2,3,4,5,6,7,8,9], p=0.25, std=0.1, shuffle=True):
         
     test_set_x = np.array(test_set_x, np.float32).reshape(test_n, dim*dim)
     test_set_y = np.array(test_set_y, np.int32)
+
+    if shuffle:
+        train_shuffled = np.c_[train_set_x, train_set_y]
+        valid_shuffled = np.c_[valid_set_x, valid_set_y]
+        test_shuffled = np.c_[test_set_x, test_set_y]
+
+        np.random.seed(seed)
+
+        np.random.shuffle(train_shuffled)
+        np.random.shuffle(valid_shuffled)
+        np.random.shuffle(test_shuffled)
+
+        train_set_x, train_set_y = train_shuffled[:, :dim*dim], train_shuffled[:, dim*dim]
+        valid_set_x, valid_set_y = valid_shuffled[:, :dim*dim], valid_shuffled[:, dim*dim]
+        test_set_x, test_set_y = test_shuffled[:, :dim*dim], test_shuffled[:, dim*dim]
 
     datasets = ((train_set_x, train_set_y), (valid_set_x, valid_set_y), (test_set_x, test_set_y))
     return datasets
