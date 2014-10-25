@@ -3,6 +3,7 @@ import gzip
 import cPickle
 import numpy as np
 import scipy.stats as ss
+import matplotlib.pyplot as plt
 
 
 def load_data(digits=[0,1,2,3,4,5,6,7,8,9], shuffle=True):
@@ -183,37 +184,9 @@ def make_data(digits=[0,1,2,3,4,5,6,7,8,9], sizes=[50000,10000,10000],
 
     seed = 1233
 
-    # make parts
+    # get parts
     dim = 28
-
-    a = np.zeros((dim, dim))
-    b = np.zeros((dim, dim))
-    b[3:5, 8:20] = 1.
-    c = np.zeros((dim, dim))
-    c[5:13, 6:8] = 1.
-    d = np.zeros((dim, dim))
-    d[13:15, 8:20] = 1.
-    e = np.zeros((dim, dim))
-    e[5:13, 20:22] = 1.
-    f = np.zeros((dim, dim))
-    f[15:23, 6:8] = 1.
-    g = np.zeros((dim, dim))
-    g[23:25, 8:20] = 1.
-    h = np.zeros((dim, dim))
-    h[15:23, 20:22]  = 1.
-
-    # make digits
-    digits = [np.zeros((dim, dim)) for i in range(10)]
-    digits[0] = a + b + c + e + f + g + h
-    digits[1] = a + e + h
-    digits[2] = a + b + e + d + f + g
-    digits[3] = a + b + e + d + h + g
-    digits[4] = a + c + d + e + h
-    digits[5] = a + b + c + d + g + h
-    digits[6] = a + b + c + f + d + h + g
-    digits[7] = a + b + e + h
-    digits[8] = a + b + c + d + e +f + g + h
-    digits[9] = a + b + c + d + e + h
+    digits = _load_digits()
 
     # make dataset
     train_n, valid_n, test_n = sizes 
@@ -294,3 +267,53 @@ def make_data(digits=[0,1,2,3,4,5,6,7,8,9], sizes=[50000,10000,10000],
 
     datasets = ((train_set_x, train_set_y), (valid_set_x, valid_set_y), (test_set_x, test_set_y))
     return datasets
+
+def show_sample(p=0.2, std=0.1, upper_bound=None):
+    dim = 28
+    digits = _load_digits()
+    for i in range(10):
+        m = np.array(ss.bernoulli(p).rvs((28, 28)), np.bool)
+        t = np.copy(digits[i])
+        t[m] -= 1.
+        t[t == -1.] = 1.
+        t *= 0.5
+        if upper_bound is not None:
+            t[t > upper_bound] = upper_bound
+        plt.figure()
+        plt.imshow(np.abs(t + ss.norm(0., std).rvs((dim, dim))), plt.cm.gray, interpolation='nearest')
+        plt.show()
+
+
+def _load_digits():
+    dim = 28
+
+    a = np.zeros((dim, dim))
+    b = np.zeros((dim, dim))
+    b[3:5, 8:20] = 1.
+    c = np.zeros((dim, dim))
+    c[5:13, 6:8] = 1.
+    d = np.zeros((dim, dim))
+    d[13:15, 8:20] = 1.
+    e = np.zeros((dim, dim))
+    e[5:13, 20:22] = 1.
+    f = np.zeros((dim, dim))
+    f[15:23, 6:8] = 1.
+    g = np.zeros((dim, dim))
+    g[23:25, 8:20] = 1.
+    h = np.zeros((dim, dim))
+    h[15:23, 20:22]  = 1.
+
+    # make digits
+    digits = [np.zeros((dim, dim)) for i in range(10)]
+    digits[0] = a + b + c + e + f + g + h
+    digits[1] = a + e + h
+    digits[2] = a + b + e + d + f + g
+    digits[3] = a + b + e + d + h + g
+    digits[4] = a + c + d + e + h
+    digits[5] = a + b + c + d + g + h
+    digits[6] = a + b + c + f + d + h + g
+    digits[7] = a + b + e + h
+    digits[8] = a + b + c + d + e +f + g + h
+    digits[9] = a + b + c + d + e + h
+
+    return digits
