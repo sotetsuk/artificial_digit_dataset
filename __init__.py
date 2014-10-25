@@ -265,6 +265,13 @@ def make_data(digits=[0,1,2,3,4,5,6,7,8,9], sizes=[50000,10000,10000],
         valid_set_x, valid_set_y = valid_shuffled[:, :dim*dim], valid_shuffled[:, dim*dim]
         test_set_x, test_set_y = test_shuffled[:, :dim*dim], test_shuffled[:, dim*dim]
 
+    train_set_x = np.array(train_set_x, np.float32)
+    train_set_y = np.array(train_set_y, np.int32)
+    valid_set_x = np.array(valid_set_x, np.float32)
+    valid_set_y = np.array(valid_set_y, np.int32)
+    test_set_x = np.array(test_set_x, np.float32)
+    test_set_y = np.array(test_set_y, np.int32)
+    
     datasets = ((train_set_x, train_set_y), (valid_set_x, valid_set_y), (test_set_x, test_set_y))
     return datasets
 
