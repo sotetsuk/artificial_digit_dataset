@@ -181,12 +181,12 @@ def make_data(digits=[0,1,2,3,4,5,6,7,8,9], sizes=[50000,10000,10000],
     """
     make data set
     """
-
+    
     seed = 1233
 
     # get parts
     dim = 28
-    digits = _load_digits()
+    digits_proto = _load_digits()
 
     # make dataset
     train_n, valid_n, test_n = sizes 
@@ -194,10 +194,11 @@ def make_data(digits=[0,1,2,3,4,5,6,7,8,9], sizes=[50000,10000,10000],
     train_set_x = []
     train_set_y = []
 
-    for i in range(10):
-        for j in range(train_n/10):
+    n_class = len(digits)
+    for i in digits:
+        for j in range(train_n/n_class):
             m = np.array(ss.bernoulli(p).rvs((28, 28)), np.bool)
-            t = np.copy(digits[i])
+            t = np.copy(digits_proto[i])
             t[m] -= 1.
             t[t == -1.] = 1.
             t *= 0.5
@@ -214,10 +215,10 @@ def make_data(digits=[0,1,2,3,4,5,6,7,8,9], sizes=[50000,10000,10000],
     valid_set_x = []
     valid_set_y = []
 
-    for i in range(10):
-        for j in range(valid_n/10):
+    for i in digits:
+        for j in range(valid_n/n_class):
             m = np.array(ss.bernoulli(p).rvs((28, 28)), np.bool)
-            t = np.copy(digits[i])
+            t = np.copy(digits_proto[i])
             t[m] -= 1.
             t[t == -1.] = 1.
             t *= 0.5
@@ -234,10 +235,10 @@ def make_data(digits=[0,1,2,3,4,5,6,7,8,9], sizes=[50000,10000,10000],
     test_set_x = []
     test_set_y = []
 
-    for i in range(10):
-        for j in range(test_n/10):
+    for i in digits:
+        for j in range(test_n/n_class):
             m = np.array(ss.bernoulli(p).rvs((28, 28)), np.bool)
-            t = np.copy(digits[i])
+            t = np.copy(digits_proto[i])
             t[m] -= 1.
             t[t == -1.] = 1.
             t *= 0.5
