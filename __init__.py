@@ -275,9 +275,10 @@ def make_data(digits=[0,1,2,3,4,5,6,7,8,9], sizes=[50000,10000,10000],
     datasets = ((train_set_x, train_set_y), (valid_set_x, valid_set_y), (test_set_x, test_set_y))
     return datasets
 
-def show_sample(p=0.2, std=0.1, upper_bound=None):
+def show_sample(p=0.2, std=0.1, upper_bound=None, figsize=(20, 5)):
     dim = 28
     digits = _load_digits()
+    f, ax = plt.subplots(1, 10, figsize=figsize)
     for i in range(10):
         m = np.array(ss.bernoulli(p).rvs((28, 28)), np.bool)
         t = np.copy(digits[i])
@@ -286,9 +287,9 @@ def show_sample(p=0.2, std=0.1, upper_bound=None):
         t *= 0.5
         if upper_bound is not None:
             t[t > upper_bound] = upper_bound
-        plt.figure()
-        plt.imshow(np.abs(t + ss.norm(0., std).rvs((dim, dim))), plt.cm.gray, interpolation='nearest')
-        plt.show()
+        ax[i].imshow(np.abs(t + ss.norm(0., std).rvs((dim, dim))), plt.cm.gray, interpolation='nearest')
+        ax[i].axis('off')
+    plt.show()
 
 
 def _load_digits():
