@@ -177,7 +177,7 @@ def load_img(digits=[0,1,2,3,4,5,6,7,8,9], shuffle=True):
 
 
 def make_data(digits=[0,1,2,3,4,5,6,7,8,9], sizes=[50000,10000,10000], 
-              p=0.25, std=0.1, shuffle=True):
+              p=0.25, std=0.1, shuffle=True, half=True):
     """
     make data set
     """
@@ -201,7 +201,8 @@ def make_data(digits=[0,1,2,3,4,5,6,7,8,9], sizes=[50000,10000,10000],
             t = np.copy(digits_proto[i])
             t[m] -= 1.
             t[t == -1.] = 1.
-            t *= 0.5
+            if half:
+                 t *= 0.5
             t = t + ss.norm(0., std).rvs((dim, dim))
             t[t < 0.] = 0.
         
@@ -221,7 +222,8 @@ def make_data(digits=[0,1,2,3,4,5,6,7,8,9], sizes=[50000,10000,10000],
             t = np.copy(digits_proto[i])
             t[m] -= 1.
             t[t == -1.] = 1.
-            t *= 0.5
+            if half:
+                 t *= 0.5
             t = t + ss.norm(0., std).rvs((dim, dim))
             t[t < 0.] = 0.
         
@@ -241,7 +243,8 @@ def make_data(digits=[0,1,2,3,4,5,6,7,8,9], sizes=[50000,10000,10000],
             t = np.copy(digits_proto[i])
             t[m] -= 1.
             t[t == -1.] = 1.
-            t *= 0.5
+            if half:
+                t *= 0.5
             t = t + ss.norm(0., std).rvs((dim, dim))
             t[t < 0.] = 0.
         
@@ -276,7 +279,7 @@ def make_data(digits=[0,1,2,3,4,5,6,7,8,9], sizes=[50000,10000,10000],
     datasets = ((train_set_x, train_set_y), (valid_set_x, valid_set_y), (test_set_x, test_set_y))
     return datasets
 
-def show_sample(p=0.2, std=0.1, upper_bound=None, figsize=(20, 5)):
+def show_sample(p=0.2, std=0.1, upper_bound=None, figsize=(20, 5), half=True):
     dim = 28
     digits = _load_digits()
     f, ax = plt.subplots(1, 10, figsize=figsize)
@@ -285,7 +288,8 @@ def show_sample(p=0.2, std=0.1, upper_bound=None, figsize=(20, 5)):
         t = np.copy(digits[i])
         t[m] -= 1.
         t[t == -1.] = 1.
-        t *= 0.5
+        if half:
+            t *= 0.5
         if upper_bound is not None:
             t[t > upper_bound] = upper_bound
         ax[i].imshow(np.abs(t + ss.norm(0., std).rvs((dim, dim))), plt.cm.gray, interpolation='nearest')
